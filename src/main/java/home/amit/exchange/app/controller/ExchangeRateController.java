@@ -8,6 +8,7 @@ Year :- 2023
 
 import home.amit.exchange.app.dto.ExchangeRateDTO;
 import home.amit.exchange.app.service.ExchangeRateService;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,12 @@ public class ExchangeRateController {
         Map<String, Double> rates = exchangeRateService.getExchangeRates();
         return ResponseEntity.ok(rates);
     }
+
+    public String fallbackAfterRetry(Exception ex) {
+        System.out.println("Retry exhausted");
+        return "all retries have exhausted";
+    }
+
 
     @GetMapping("/convert")
     public ResponseEntity<?> convertCurrency(

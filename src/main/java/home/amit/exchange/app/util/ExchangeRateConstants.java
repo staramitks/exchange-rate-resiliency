@@ -8,5 +8,5 @@ Year :- 2023
 
 public final class ExchangeRateConstants {
 
-    public static String EXCHANGE_RATE_URL="https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
+    public static String EXCHANGE_RATE_URL="https://www.ecdsdb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
 }
