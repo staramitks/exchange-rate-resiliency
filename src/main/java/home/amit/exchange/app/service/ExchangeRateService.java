@@ -16,4 +16,5 @@ public interface ExchangeRateService {
 
     Map<String, Double> getExchangeRates();
     Double getExchangeRate(ExchangeRateDTO exchangeRateDTO);
+    Map<String, Integer> getCurrencyCountMap();
 }

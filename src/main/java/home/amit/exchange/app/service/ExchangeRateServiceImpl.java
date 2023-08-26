@@ -23,16 +23,16 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+
 
 @Service
 public class ExchangeRateServiceImpl implements ExchangeRateService{
     private static final String EXCHANGE_SERVICE = "exchangeService";
 
 
-    // 0/10 0 * * * ?
-    //  @Scheduled(cron = 0/10 0 * * * ?)
+    Map<String, Integer> currencyMap= new ConcurrentHashMap<>();
 
-//    @Scheduled(fixedRate = 10000)
     @Override
     @CircuitBreaker(name = EXCHANGE_SERVICE, fallbackMethod = "fallbackAfterRetry")
     @Retry(name = EXCHANGE_SERVICE)
@@ -85,8 +85,27 @@ public class ExchangeRateServiceImpl implements ExchangeRateService{
         double toRate = rates.getOrDefault(exchangeRateDTO.getToCurrency(), 1.0);
         double fromRateEur=exchangeRateDTO.getAmount()/fromRate;
         double toRateCurrencyAmount=fromRateEur*toRate;
+        this.incrementCurrencyMap(exchangeRateDTO.getFromCurreny());
+        this.incrementCurrencyMap(exchangeRateDTO.getToCurrency());
         return toRateCurrencyAmount;
 
 
+
     }
+
+    @Override
+    public Map<String, Integer> getCurrencyCountMap() {
+        synchronized (currencyMap) {
+            return currencyMap;
+        }
+    }
+
+    private void incrementCurrencyMap(String currency)
+    {
+        synchronized (currencyMap) {
+            currencyMap.put(currency, currencyMap.getOrDefault(currency, 0) + 1);
+        }
+    }
+
+
 }

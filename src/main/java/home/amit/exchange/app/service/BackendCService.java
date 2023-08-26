@@ -45,7 +45,7 @@ public class BackendCService implements Service {
     @CircuitBreaker(name = BACKEND_C)
     @Bulkhead(name = BACKEND_C)
     public String ignoreException() {
-        throw new BusinessException("This exception is ignored by the CircuitBreaker of backend A");
+        throw new BusinessException("This exception is ignored by the CircuitBreaker of backend C");
     }
 
     @Override
@@ -53,7 +53,7 @@ public class BackendCService implements Service {
     @Bulkhead(name = BACKEND_C)
     @Retry(name = BACKEND_C)
     public String success() {
-        return "Hello World from backend A";
+        return "Hello World from backend C";
     }
 
     @Override
@@ -76,7 +76,7 @@ public class BackendCService implements Service {
     @CircuitBreaker(name = BACKEND_C, fallbackMethod = "fluxFallback")
     public Flux<String> fluxTimeout() {
         return Flux.
-                just("Hello World from backend A")
+                just("Hello World from backend C")
                 .delayElements(Duration.ofSeconds(10));
     }
 
@@ -86,7 +86,7 @@ public class BackendCService implements Service {
     @Bulkhead(name = BACKEND_C)
     @Retry(name = BACKEND_C)
     public Mono<String> monoSuccess() {
-        return Mono.just("Hello World from backend A");
+        return Mono.just("Hello World from backend C");
     }
 
     @Override
@@ -98,11 +98,11 @@ public class BackendCService implements Service {
     }
 
     @Override
-    @TimeLimiter(name = BACKEND_C)
+    @TimeLimiter(name = BACKEND_C , fallbackMethod = "monoFallback")
     @Bulkhead(name = BACKEND_C)
     @CircuitBreaker(name = BACKEND_C, fallbackMethod = "monoFallback")
     public Mono<String> monoTimeout() {
-        return Mono.just("Hello World from backend A")
+        return Mono.just("Hello World from backend C")
                 .delayElement(Duration.ofSeconds(10));
     }
 
@@ -126,7 +126,7 @@ public class BackendCService implements Service {
     @CircuitBreaker(name = BACKEND_C)
     @Retry(name = BACKEND_C)
     public CompletableFuture<String> futureSuccess() {
-        return CompletableFuture.completedFuture("Hello World from backend A");
+        return CompletableFuture.completedFuture("Hello World from backend C");
     }
 
     @Override
@@ -146,7 +146,7 @@ public class BackendCService implements Service {
     @CircuitBreaker(name = BACKEND_C, fallbackMethod = "futureFallback")
     public CompletableFuture<String> futureTimeout() {
         Try.run(() -> Thread.sleep(5000));
-        return CompletableFuture.completedFuture("Hello World from backend A");
+        return CompletableFuture.completedFuture("Hello World from backend C");
     }
 
     private String fallback(HttpServerErrorException ex) {
@@ -170,7 +170,8 @@ public class BackendCService implements Service {
     }
 
     private Mono<String> monoFallback(Exception ex) {
-        return Mono.just("Recovered: " + ex.toString());
+
+        return Mono.just("Recovered monoFallback: " + ex.toString());
     }
 
     private Flux<String> fluxFallback(Exception ex) {
