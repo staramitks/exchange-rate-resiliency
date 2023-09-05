@@ -2,6 +2,7 @@ package home.amit.exchange.app.service;
 
 import home.amit.exchange.app.dto.ExchangeRateDTO;
 
+import java.io.IOException;
 import java.util.Map;
 
 /*
@@ -15,4 +16,5 @@ public interface ExchangeRateService {
 
     Map<String, Double> getExchangeRates();
     Double getExchangeRate(ExchangeRateDTO exchangeRateDTO);
+    Map<String, Integer> getCurrencyCountMap();
 }
